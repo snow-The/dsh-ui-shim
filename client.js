@@ -73,16 +73,12 @@ window.__ModuleLoader__.load({
     }
     let shimScheduled = false;
     const inject = [];
+    // factory-level bootstrap: runs immediately, does NOT depend on apply()
+    applyShims();
+    const observer = new MutationObserver(schedulePass);
+    observer.observe(document.body, { childList: true, subtree: true });
     function apply(ctx) {
-      ctx.effect(() => {
-        applyShims();
-        const observer = new MutationObserver(schedulePass);
-        observer.observe(document.body, { childList: true, subtree: true });
-        return () => {
-          observer.disconnect();
-          shimScheduled = false;
-        };
-      });
+      ctx.effect(() => { applyShims(); });
     }
     module.exports.apply = apply;
     module.exports.inject = inject;
