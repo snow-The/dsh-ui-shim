@@ -1,4 +1,4 @@
-// dsh-ui-shim client - standalone three-column shim (extracted from web-ui-all)
+// dsh-ui-shim client - standalone column shim (extracted from web-ui-all)
 // Stamps data-pane/data-dsh-frame so other plugins can target sidebar/conversation/details
 // without depending on the official DOM class names (which change per build).
 window.__ModuleLoader__.load({
@@ -9,7 +9,7 @@ window.__ModuleLoader__.load({
     // health marker: set as soon as this client executes (guide_boot uiChecks target)
     document.documentElement.setAttribute("data-dsh-shim-mounted", "");
 
-    /** Column shims: element selector → attribute to stamp. */
+    /** Legacy class-name shims (older official builds). */
     const COLUMN_SHIMS = [
       ["[class*=\"sidebarCol\"]", "data-pane=\"sidebar\""],
       ["[class*=\"centerCol\"]", "data-pane=\"conversation\""],
@@ -27,20 +27,38 @@ window.__ModuleLoader__.load({
           changed = true;
         }
       }
-      const frame = document.querySelector("[class*=\"sidebarCol\"]")?.parentElement ?? null;
-      if (frame !== null && frame.getAttribute("data-dsh-frame") !== "") {
-        frame.setAttribute("data-dsh-frame", "");
-        changed = true;
+      // slot-anchored pass: header slot -> its column -> frame + siblings
+      const slotHost = document.querySelector('[data-slot="conversation.session.header"]');
+      if (slotHost) {
+        let frame = slotHost;
+        for (let i = 0; i < 6 && frame && !frame.getAttribute('data-dsh-frame'); i++) {
+          frame = frame.parentElement;
+        }
+        if (frame && frame.getAttribute('data-dsh-frame') !== '') {
+          frame.setAttribute('data-dsh-frame', '');
+          changed = true;
+        }
+        let col = slotHost.parentElement;
+        if (col && !col.getAttribute('data-pane')) {
+          col.setAttribute('data-pane', 'conversation');
+          changed = true;
+          const prev = col.previousElementSibling;
+          const next = col.nextElementSibling;
+          if (prev && !prev.getAttribute('data-pane')) { prev.setAttribute('data-pane', 'sidebar'); changed = true; }
+          if (next && !next.getAttribute('data-pane')) { next.setAttribute('data-pane', 'details'); changed = true; }
+        }
       }
+      // tablist fallback (older official builds)
       const tabsEl = document.querySelector("[class*=tabs][role=tablist]");
       if (tabsEl) {
         let center = tabsEl.closest("[class*=Col]") || tabsEl.parentElement;
-        if (center && !center.getAttribute("data-pane")) {
-          center.setAttribute("data-pane", "conversation");
+        if (center && !center.getAttribute('data-pane')) {
+          center.setAttribute('data-pane', 'conversation');
+          changed = true;
           const prev = center.previousElementSibling;
           const next = center.nextElementSibling;
-          if (prev && !prev.getAttribute("data-pane")) { prev.setAttribute("data-pane", "sidebar"); changed = true; }
-          if (next && !next.getAttribute("data-pane")) { next.setAttribute("data-pane", "details"); changed = true; }
+          if (prev && !prev.getAttribute('data-pane')) { prev.setAttribute('data-pane', 'sidebar'); changed = true; }
+          if (next && !next.getAttribute('data-pane')) { next.setAttribute('data-pane', 'details'); changed = true; }
         }
       }
       return changed;
