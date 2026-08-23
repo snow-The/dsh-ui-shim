@@ -1,12 +1,14 @@
 // dsh-ui-shim client - standalone three-column shim (extracted from web-ui-all)
 // Stamps data-pane/data-dsh-frame so other plugins can target sidebar/conversation/details
 // without depending on the official DOM class names (which change per build).
+if (typeof window === 'undefined' || !window.__ModuleLoader__) { /* server-side import of this bundle: no-op */ } else {
 window.__ModuleLoader__.load({
   id: "@snow-the/dsh-ui-shim",
   factory: (require) => {
     var module = { exports: {} };
     var exports = module.exports;
     Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+}
 
     // health marker: set as soon as this client executes (guide_boot uiChecks target)
     document.documentElement.setAttribute("data-dsh-shim-mounted", "");
