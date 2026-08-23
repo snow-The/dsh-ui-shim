@@ -1,0 +1,4 @@
+- id: dsh-ui-shim
+  insert:
+    - id: dsh-ui-shim
+      name: '@snow-the/dsh-ui-shim'
