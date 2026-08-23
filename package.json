@@ -1,6 +1,6 @@
 {
   "name": "@snow-the/dsh-ui-shim",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Standalone three-column shim for DeepSeek Harness web: stamps data-pane/data-dsh-frame on the layout so plugins can target sidebar/conversation/details without depending on official DOM class names.",
   "type": "module",
   "main": "./index.js",
@@ -29,8 +29,11 @@
       "patch": "./cordis.patch.yml"
     },
     "client": {
-      "inject": [],
-      "platform": "web"
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "immediately": true
     }
   },
   "repository": {
