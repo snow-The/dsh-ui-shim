@@ -30,14 +30,22 @@
     },
     "client": {
       "platform": "web",
-      "inject": [
-        "@deepseek-ai/dsh-client-runtime"
-      ],
+      "inject": [],
       "immediately": true
+    },
+    "compatibility": {
+      "dshReleases": [
+        "0.2.0-rc.1",
+        "0.2.0-rc.2"
+      ],
+      "verifiedAgainst": "0.2.0-rc.2"
     }
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/snow-The/dsh-ui-shim.git"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.0-rc.1"
   }
 }
